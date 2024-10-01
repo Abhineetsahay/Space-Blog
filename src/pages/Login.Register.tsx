@@ -12,7 +12,7 @@ const Authoisation: React.FC = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        navigate(`/dashboard`);
+        navigate(`/dashboard/blogs`);
       } else {
         setAuthState(true);
       }

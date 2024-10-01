@@ -2,6 +2,15 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import { Loader } from "../../../utils/Loaders";
+
+interface Bookmark {
+  _id: string;
+  title: string;
+  imageUrl: string;
+  summary: string;
+  url: string;
+}
 
 interface User {
   _id: string;
@@ -9,7 +18,7 @@ interface User {
   email: string;
   posts: any[];
   likesPost: any[];
-  bookmarks: any[];
+  bookmarks: Bookmark[];
   createdAt: string;
   updatedAt: string;
 }
@@ -19,6 +28,9 @@ const Profile = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
+  const [bookmarkedArticles, setBookmarkedArticles] = useState<Set<string>>(
+    new Set()
+  );
 
   const fetchUser = async () => {
     if (!username) {
@@ -29,9 +41,16 @@ const Profile = () => {
 
     try {
       const url = process.env.REACT_APP_BACKENDURL;
-      const response = await axios.get(`${url}getUser?username=${username}`);
+      const response = await axios.get(`${url}/getUser?username=${username}`);
       if (response.data.success) {
-        setUser(response.data.findUser);
+        const fetchedUser: User = response.data.findUser;
+        setUser(fetchedUser);
+
+        // Initialize bookmarkedArticles from user data
+        const bookmarkIds = fetchedUser.bookmarks.map((b) => b._id);
+        const bookmarkSet = new Set<string>(bookmarkIds);
+        setBookmarkedArticles(bookmarkSet);
+        saveBookmarksToLocalStorage(bookmarkSet);
       } else {
         setError(response.data.message || "Failed to fetch user data.");
       }
@@ -46,10 +65,47 @@ const Profile = () => {
     }
   };
 
+  const saveBookmarksToLocalStorage = (bookmarks: Set<string>) => {
+    localStorage.setItem(
+      "bookmarkedArticles",
+      JSON.stringify(Array.from(bookmarks))
+    );
+  };
+
+  const handleRemoveBookmark = async (bookmark: Bookmark) => {
+    if (!username) {
+      toast.error("You need to be logged in to remove bookmarks.");
+      return;
+    }
+
+    const apiUrl = process.env.REACT_APP_BACKENDURL;
+    console.log(bookmark);
+    const { title, imageUrl, summary, url, _id } = bookmark;
+    try {
+      const response = await axios.delete(`${apiUrl}removeBookmark`, {
+        data: { username, title, imageUrl: imageUrl, summary, url },
+      });
+
+      if (response.data.success) {
+        const newBookmarks = new Set(bookmarkedArticles);
+        newBookmarks.delete(bookmark._id);
+        setBookmarkedArticles(newBookmarks);
+        saveBookmarksToLocalStorage(newBookmarks);
+        toast.success("Bookmark removed successfully!");
+      } else {
+        toast.error(response.data.message || "Failed to remove bookmark.");
+      }
+    } catch (error: any) {
+      console.error("Error removing bookmark:", error);
+      toast.error(
+        error.response?.data?.message || "Failed to remove bookmark."
+      );
+    }
+  };
+
   useEffect(() => {
     fetchUser();
   }, []);
-
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
@@ -60,11 +116,11 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center p-6">
       <h1 className="text-4xl font-bold mb-8">Profile Page</h1>
 
       {loading ? (
-        <p className="text-gray-400">Loading...</p>
+        <Loader/>
       ) : error ? (
         <div className="bg-red-600 p-4 rounded-lg shadow-md">
           <p className="text-white">{error}</p>
@@ -87,6 +143,8 @@ const Profile = () => {
               Member since {formatDate(user.createdAt)}
             </p>
           </div>
+
+          {/* User Details */}
           <div className="bg-gray-700 p-6 rounded-md mb-6">
             <h3 className="text-lg font-medium mb-2">User Information</h3>
             <p className="text-gray-300">
@@ -96,7 +154,8 @@ const Profile = () => {
               <strong>Email:</strong> {user.email}
             </p>
           </div>
-          <div className="flex justify-between">
+
+          <div className="flex justify-between mb-6">
             <button
               className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors duration-200"
               onClick={() => toast("Edit Profile functionality coming soon!")}
@@ -104,6 +163,7 @@ const Profile = () => {
               Edit Profile
             </button>
           </div>
+
           <div className="pt-5">
             <h3 className="text-2xl font-semibold mb-4">Your Bookmarks</h3>
 
@@ -133,15 +193,23 @@ const Profile = () => {
                         {bookmark.summary?.substring(0, 100)}...
                       </p>
                     </div>
-
-                    <a
-                      href={bookmark.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-400 hover:underline mt-4"
-                    >
-                      Read more →
-                    </a>
+                    <div className="flex gap-6 justify-center items-center mt-6">
+                      <a
+                        href={bookmark.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-400 hover:underline"
+                      >
+                        Read more →
+                      </a>
+                      <button
+                        onClick={() => handleRemoveBookmark(bookmark)}
+                        className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md transition-colors duration-200"
+                        aria-label={`Remove bookmark for ${bookmark.title}`}
+                      >
+                        Remove Bookmark
+                      </button>
+                    </div>
                   </motion.div>
                 ))}
               </div>

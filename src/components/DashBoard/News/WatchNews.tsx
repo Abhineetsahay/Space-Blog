@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import { Loader } from "../../../utils/Loaders";
 
 const WatchNews = () => {
   const [news, setNews] = useState<any[]>([]);
@@ -103,7 +104,7 @@ const WatchNews = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {news.length === 0 ? (
-          <p className="text-center text-gray-400">Loading...</p>
+          <Loader/>
         ) : (
           news.map((article) => (
             <motion.div
@@ -123,6 +124,7 @@ const WatchNews = () => {
                   <img
                     src={article.image_url}
                     alt={article.title}
+                    loading="lazy"
                     className="w-full h-48 object-cover rounded-md mb-4"
                   />
                 )}

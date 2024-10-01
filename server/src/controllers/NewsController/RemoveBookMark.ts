@@ -12,12 +12,11 @@ export const RemoveBookmark = async (req: Request, res: Response) => {
         message: "Username not Found",
       });
     }
-
+    
     findUser.bookmarks = findUser.bookmarks.filter(bookmark => 
       !(bookmark.title === title && bookmark.imageUrl === imageUrl && bookmark.summary === summary && bookmark.url === url)
     ) as any;
     await findUser.save();
-
     return res.status(200).json({
       success: true,
       message: "Bookmark removed successfully",

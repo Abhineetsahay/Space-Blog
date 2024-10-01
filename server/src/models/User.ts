@@ -37,6 +37,10 @@ const BookmarkSchema = new Schema(
 );
 const BlogSchema = new Schema(
   {
+    username:{
+      type:String,
+      required:true
+    },
     title: {
       type: String,
       required: false,

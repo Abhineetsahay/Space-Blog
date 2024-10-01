@@ -26,7 +26,7 @@ const Navbar = () => {
           navigate(`${username}/profile`)
   }
   return (
-    <nav className="bg-gray-800 text-white">
+    <nav className="bg-gray-800 text-white ">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex-shrink-0">
@@ -54,6 +54,12 @@ const Navbar = () => {
             >
               Your Profile
             </button>
+            <button
+              onClick={()=>navigate("/dashboard/CreateBlog")}
+              className="hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+            >
+             Create Your Blog
+            </button>
 
             <button
               onClick={() => navigate("/dashboard/watchNews")}
@@ -63,7 +69,7 @@ const Navbar = () => {
             </button>
 
             <button
-              onClick={() => navigate("/blogs")}
+              onClick={() => navigate("/dashboard/blogs")}
               className="hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
             >
               Blogs
