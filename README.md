@@ -1,50 +1,76 @@
 # Space Blog
 
-Space Blog is a dynamic platform where space enthusiasts can create, share, and engage with space-related blogs and news. Whether you're passionate about astronomy, space exploration, or the latest in space technology, Space Blog offers a seamless experience to express your thoughts and stay updated with daily space news.
+**Space Blog** is a platform designed for space enthusiasts to create, share, and engage with blogs and news related to space. With features like user authentication, daily news updates, and the ability to create and like blogs, Space Blog offers an engaging experience for anyone interested in the wonders of the universe.
 
-## 🚀 Features
+## 🌟 Features
 
-### **User Authentication**
-- **Sign Up & Login**: Create an account or log in using your email.
-- **Google Authentication**: Easily sign in with your Google account.
-- **Secure Authentication**: Powered by Firebase for reliable security.
+### User Authentication
+- **Sign Up & Login**: Users can create an account or log in using their email.
+- **Google Authentication**: Fast and secure login using Google accounts.
+- **Secure Authentication**: Managed by Firebase for reliable security.
 
-### **Blog Management**
-- **Create Blog**: Share your thoughts by creating new blogs.
-- **View Blogs**: Explore blogs created by other users.
-- **Like Blogs**: Show appreciation by liking your favorite blogs.
-- **Comment on Blogs** *(Coming Soon)*.
+### Blog Management
+- **Create Blog**: Users can create and publish their own blogs.
+- **View Blogs**: Explore blogs written by other users.
+- **Like Blogs**: Engage with content by liking blogs.
+- **Comment on Blogs** *(Coming Soon)*: A feature to interact with blog posts through comments.
 
-### **Space News**
-- **Daily News Updates**: Stay informed with the latest space-related news every day.
-- **Bookmark News**: Save your favorite news articles for easy access.
-- **Manage Bookmarks**: Remove bookmarks as needed.
+### Space News
+- **Daily Updates**: Stay informed with the latest space-related news every day.
+- **Bookmark News**: Save interesting news articles for later reading.
+- **Manage Bookmarks**: Easily remove bookmarks when needed.
 
 ## 🛠️ Tech Stack
 
-### **Frontend**
-- **ReactJS**: Building dynamic user interfaces.
-- **Tailwind CSS**: Styling the application with utility-first CSS framework.
-- **Firebase**: Handling authentication and user management.
+- **Frontend**:
+  - **ReactJS**: Framework for building dynamic user interfaces.
+  - **Tailwind CSS**: Utility-first CSS framework for styling.
+  - **Firebase**: Authentication and real-time database for user management.
 
-### **Backend**
-- **Node.js & Express.js**: Creating a robust server-side application.
-- **TypeScript**: Enhancing JavaScript with static typing.
-- **MongoDB**: Managing data with a flexible NoSQL database.
-- **REST APIs**: Facilitating communication between frontend and backend.
-- **Postman**: Testing APIs to ensure reliability.
+- **Backend**:
+  - **Node.js**: JavaScript runtime for building server-side applications.
+  - **Express.js**: Web framework for Node.js to build RESTful APIs.
+  - **TypeScript**: Adds static typing to JavaScript for better code quality.
+  - **MongoDB**: NoSQL database for storing user and blog data.
+  - **Postman**: Tool for API testing.
 
-## 🔧 Installation
+## 📁 Folder Structure
 
-### **Prerequisites**
+```
+Space-Blog/
+├── node_modules/
+├── public/
+├── server/
+├── src/
+│   ├── components/
+│   ├── firebase/
+│   │   └── Firebase.ts
+│   ├── pages/
+│   ├── utils/
+│   ├── App.tsx
+│   ├── index.css
+│   ├── index.tsx
+│   └── react-app-env.d.ts
+├── .env
+├── .gitignore
+├── package-lock.json
+├── package.json
+├── README.md
+├── tailwind.config.js
+└── tsconfig.json
+```
+
+## 📦 Installation
+
+### Prerequisites
 - **Node.js**: Ensure you have Node.js installed. [Download Node.js](https://nodejs.org/)
 - **MongoDB**: Set up a MongoDB database. [Get MongoDB](https://www.mongodb.com/)
 
-### **Backend Setup**
+### Backend Setup
 1. **Clone the Repository**
    ```bash
    git clone https://github.com/Abhineetsahay/Space-Blog.git
-   cd Space-Blog/backend
+   cd Space-Blog/server
    ```
 
 2. **Install Dependencies**
@@ -52,8 +78,8 @@ Space Blog is a dynamic platform where space enthusiasts can create, share, and 
    npm install
    ```
 
-3. **Configure Environment Variables**
-   - Create a `.env` file in the `backend` directory.
+3. **Create Environment Variables**
+   - Create a `.env` file in the `server` directory.
    - Add the following variables:
      ```env
      PORT=5000
@@ -68,10 +94,10 @@ Space Blog is a dynamic platform where space enthusiasts can create, share, and 
    npm run start
    ```
 
-### **Frontend Setup**
+### Frontend Setup
 1. **Navigate to Frontend Directory**
    ```bash
-   cd ../frontend
+   cd ../src
    ```
 
 2. **Install Dependencies**
@@ -79,8 +105,8 @@ Space Blog is a dynamic platform where space enthusiasts can create, share, and 
    npm install
    ```
 
-3. **Configure Environment Variables**
-   - Create a `.env` file in the `frontend` directory.
+3. **Create Environment Variables**
+   - Create a `.env` file in the `src` directory.
    - Add the following variables:
      ```env
      REACT_APP_FIREBASE_API_KEY=your_firebase_api_key
@@ -94,9 +120,9 @@ Space Blog is a dynamic platform where space enthusiasts can create, share, and 
    npm start
    ```
 
-## 📚 API Documentation
+## 📜 API Documentation
 
-### **Blog Routes**
+### Blog Routes
 - **Get All Blogs**
   - **Endpoint**: `/api/blogs/getBlogs`
   - **Method**: `GET`
@@ -119,7 +145,7 @@ Space Blog is a dynamic platform where space enthusiasts can create, share, and 
     - `userId` (string)
   - **Description**: Toggles like status on a blog.
 
-### **User Routes**
+### User Routes
 - **Add a New User**
   - **Endpoint**: `/api/users/addUser`
   - **Method**: `POST`
@@ -144,19 +170,17 @@ Space Blog is a dynamic platform where space enthusiasts can create, share, and 
     - `password` (string)
   - **Description**: Authenticates a user.
 
-### **Bookmark Routes**
+### Bookmark Routes
 - **Add Bookmark**
   - **Endpoint**: `/api/bookmarks/addBookmark`
   - **Method**: `PUT`
-  - 
+
 - **Remove Bookmark**
   - **Endpoint**: `/api/bookmarks/removeBookmark`
   - **Method**: `DELETE`
-
+    
 ## 📧 Contact
 
 For any inquiries or feedback, please reach out to [abhineetsahay@example.com](mailto:abhineetsahay@example.com).
-
----
 
 Happy Blogging! 🚀✨
