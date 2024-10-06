@@ -46,7 +46,8 @@ const Registration: React.FC<RegistrationProps> = ({ toggleAuth }) => {
   const handleGoogleSignIn = async () => {
     try {
       const data= await signInWithPopup(auth, googleProvider);
-      await axios.post(`${url}addUser`,{username:data.user.displayName,email:data.user.email});
+      const t=await axios.post(`${url}addUser`,{username:data.user.displayName,email:data.user.email});
+      console.log(t);
       
       localStorage.setItem("name",data.user.displayName||"");
       navigate("/dashboard/blogs");
