@@ -181,6 +181,6 @@ Space-Blog/
     
 ## 📧 Contact
 
-For any inquiries or feedback, please reach out to [abhineetsahay@example.com](mailto:abhineetsahay@example.com).
+For any inquiries or feedback, please reach out to [abhineetsahay@example.com](mailto:abhineetsahay@gmail.com).
 
 Happy Blogging! 🚀✨
