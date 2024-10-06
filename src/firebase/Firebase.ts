@@ -1,15 +1,14 @@
-// Firebase/Firebase.js or Firebase/Firebase.ts
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider } from "firebase/auth"; // Import GoogleAuthProvider
+import { getAuth, GoogleAuthProvider } from "firebase/auth"; 
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyABYj3ohUqXZYx7wzF76iTYC2QaRQUEIFs",
-  authDomain: "space-beb9b.firebaseapp.com",
-  projectId: "space-beb9b",
-  storageBucket: "space-beb9b.appspot.com",
-  messagingSenderId: "493976127458",
-  appId: "1:493976127458:web:8398266b45c8dd0cd51bbb"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
 };
 
 const app = initializeApp(firebaseConfig);
