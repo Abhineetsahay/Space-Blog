@@ -13,6 +13,7 @@ interface Comment {
 
 interface Blog {
   _id: string;
+  username: string;
   title: string;
   description: string;
   likes: number;
@@ -23,14 +24,27 @@ interface Blog {
 const SeeBlogs = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(false);
+  
+  const [likes, setLikes] = useState<string[]>(
+    JSON.parse(localStorage.getItem("likedPost") || "[]")
+  );
+  
+  const username = localStorage.getItem("name");
 
   const handleSeeBlogs = async () => {
     try {
       setLoading(true);
       const apiUrl = process.env.REACT_APP_BACKENDURL;
       const response = await axios.get(`${apiUrl}getBlogs`);
+
       if (response.data.success) {
-        setBlogs(response.data.Blogs);
+        const fetchedBlogs = response.data.Blogs;
+
+        const updatedBlogs = fetchedBlogs.map((blog: Blog) => ({
+          ...blog,
+          likedByUser: likes.includes(blog._id),
+        }));
+        setBlogs(updatedBlogs);
       }
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Failed to fetch blogs.");
@@ -42,7 +56,8 @@ const SeeBlogs = () => {
   const handleLike = async (blogId: string) => {
     try {
       const apiUrl = process.env.REACT_APP_BACKENDURL;
-      const response = await axios.post(`${apiUrl}likeBlog`, { blogId });
+      const response = await axios.post(`${apiUrl}addRemoveLike`, { username, blogId });
+
       if (response.data.success) {
         setBlogs((prevBlogs) =>
           prevBlogs.map((blog) =>
@@ -55,7 +70,18 @@ const SeeBlogs = () => {
               : blog
           )
         );
-        // toast.success(blogs.likedByUser ? "Post unliked!" : "Post liked!");
+        if (likes.includes(blogId)) {
+          const updatedLikes = likes.filter((id) => id !== blogId);
+          setLikes(updatedLikes);
+          localStorage.setItem("likedPost", JSON.stringify(updatedLikes));
+        } else {
+          
+          const updatedLikes = [...likes, blogId];
+          setLikes(updatedLikes);
+          localStorage.setItem("likedPost", JSON.stringify(updatedLikes));
+        }
+
+        toast.success(response.data.message);
       }
     } catch (error: any) {
       toast.error("Failed to like/unlike the post.");
@@ -64,7 +90,7 @@ const SeeBlogs = () => {
 
   useEffect(() => {
     handleSeeBlogs();
-  }, []);
+  }, []); 
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
@@ -76,7 +102,7 @@ const SeeBlogs = () => {
       )}
 
       {blogs.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {blogs.map((blog) => (
             <motion.div
               key={blog._id}
@@ -85,10 +111,10 @@ const SeeBlogs = () => {
               animate={{ opacity: 1, y: 0 }}
               whileHover={{ scale: 1.05 }}
             >
-              <h2 className="text-xl font-semibold mb-2">{blog.title}</h2>
+              <h2 className="text-xl font-semibold mb-2 text-white">{blog.title}</h2>
               <p className="text-gray-400 mb-4">{blog.description}</p>
 
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center mt-4">
                 <motion.button
                   onClick={() => handleLike(blog._id)}
                   whileTap={{ scale: 0.9 }}
@@ -102,9 +128,14 @@ const SeeBlogs = () => {
                   <span className="ml-1">{blog.likes}</span>
                 </motion.button>
 
-                <button className="text-gray-400 text-sm">
-                  Comments: {blog.comments.length}
-                </button>
+                <div className="flex flex-col items-end">
+                  <span className="text-sm text-gray-400">
+                    Created by: <span className="font-medium text-white">{blog.username}</span>
+                  </span>
+                  <span className="text-sm text-gray-400 cursor-pointer">
+                    Comments: {blog.comments.length}
+                  </span>
+                </div>
               </div>
             </motion.div>
           ))}

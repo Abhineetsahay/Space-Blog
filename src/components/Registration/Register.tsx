@@ -34,7 +34,7 @@ const Registration: React.FC<RegistrationProps> = ({ toggleAuth }) => {
       await createUserWithEmailAndPassword(auth, data.email, data.password);
       await axios.post(`${url}addUser`,{username:data.username,email:data.email});
       localStorage.setItem("name",data.username);
-      navigate("/dashboard");
+      navigate("/dashboard/blogs");
       toast.success("User Created Successfully");
     } catch (error: any) {
       const errorMessage = getErrorMessage(error.code);
@@ -45,8 +45,11 @@ const Registration: React.FC<RegistrationProps> = ({ toggleAuth }) => {
 
   const handleGoogleSignIn = async () => {
     try {
-      await signInWithPopup(auth, googleProvider);
-      navigate("/dashboard");
+      const data= await signInWithPopup(auth, googleProvider);
+      await axios.post(`${url}addUser`,{username:data.user.displayName,email:data.user.email});
+      
+      localStorage.setItem("name",data.user.displayName||"");
+      navigate("/dashboard/blogs");
       toast.success("Signed in with Google successfully");
     } catch (error: any) {
       const errorMessage = getErrorMessage(error.code);

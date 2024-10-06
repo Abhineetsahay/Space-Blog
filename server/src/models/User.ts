@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import mongoose, { Schema, Types, model } from "mongoose";
 
 const CommentSchema = new Schema(
   {
@@ -72,7 +72,7 @@ const UserSchema = new Schema(
       match: [/.+\@.+\..+/, "Please fill a valid email address"],
     },
     posts: [BlogSchema],
-    likesPost: [BlogSchema],
+    likesPost: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Blog' }],
     bookmarks: [BookmarkSchema],
   },
   {

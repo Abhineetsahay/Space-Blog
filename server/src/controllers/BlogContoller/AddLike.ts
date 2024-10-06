@@ -1,58 +1,56 @@
 import { Request, Response } from "express";
-import { Blog } from "../../models/User"; // Assuming Blog is exported from User model
-import { User } from "../../models/User"; // Assuming User model is being used for user-related operations
+import { Blog, User } from "../../models/User";
 
-export const AddLike = async (req: Request, res: Response) => {
+interface BlogAddRemoval {
+  username: string;
+  blogId: string;
+}
+
+export const AddRemoveLike = async (req: Request, res: Response) => {
   try {
-    const { username, blogId } = req.body; // Only need username and blogId
-    const userToBeUpdated = await User.findOne({ username });
+    const { username, blogId }: BlogAddRemoval = req.body;
 
-    if (!userToBeUpdated) {
+    const user = await User.findOne({ username });
+    const blog = await Blog.findById(blogId);
+
+    if (!user || !blog) {
       return res.status(404).json({
         success: false,
-        message: "User not found.",
+        message: "User or Blog not found",
       });
     }
 
-    if (!blogId) {
-      return res.status(400).json({
-        success: false,
-        message: "Blog ID is required.",
-      });
-    }
+    const blogInUserLikes = user.likesPost.some(
+      (postId: any) => postId.toString() === blogId
+    );
 
-    const blogToUpdate = await Blog.findById(blogId);
-
-    if (!blogToUpdate) {
-      return res.status(404).json({
-        success: false,
-        message: "Blog not found.",
-      });
-    }
-
-    // Check if the user has already liked the blog
-    const hasLiked = userToBeUpdated.likedBlogs.includes(blogId);
-
-    if (hasLiked) {
-      // If already liked, unlike the blog
-      userToBeUpdated.likedBlogs = userToBeUpdated.likedBlogs.filter(
-        (id) => id.toString() !== blogId
+    if (blogInUserLikes) {
+      blog.likes -= 1;
+      await blog.save();
+      user.likesPost = user.likesPost.filter(
+        (postId: any) => postId.toString() !== blogId
       );
-      blogToUpdate.likes -= 1; // Decrement likes
+      await user.save();
+
+      return res.status(200).json({
+        success: true,
+        message: "Blog unliked successfully.",
+        likes: blog.likes,
+      });
     } else {
-      // If not liked, like the blog
-      userToBeUpdated.likedBlogs.push(blogId);
-      blogToUpdate.likes += 1; // Increment likes
+
+      blog.likes += 1;
+      await blog.save();
+
+      user.likesPost.push(blog._id);
+      await user.save();
+
+      return res.status(200).json({
+        success: true,
+        message: "Blog liked successfully.",
+        likes: blog.likes,
+      });
     }
-
-    await userToBeUpdated.save();
-    await blogToUpdate.save();
-
-    return res.status(200).json({
-      success: true,
-      message: hasLiked ? "Blog unliked successfully." : "Blog liked successfully.",
-      likes: blogToUpdate.likes,
-    });
   } catch (error: any) {
     console.error("Error adding/removing like:", error);
     return res.status(500).json({

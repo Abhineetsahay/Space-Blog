@@ -11,6 +11,7 @@ const Navbar = () => {
   const handleLogOut = async () => {
     try {
       await auth.signOut();
+      localStorage.clear();
       toast.success("User Logged Out Successfully");
       navigate("/authenticate");
     } catch (error) {

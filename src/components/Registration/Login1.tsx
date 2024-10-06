@@ -3,8 +3,8 @@ import { useForm } from 'react-hook-form';
 import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from '../../firebase/Firebase';
 import toast from 'react-hot-toast';
-import {jwtDecode} from 'jwt-decode'; 
 import { FaEnvelope ,FaLock,FaGoogle} from 'react-icons/fa';
+import axios from 'axios';
 interface Login1Props {
   toggleAuth: () => void;
 }
@@ -23,26 +23,26 @@ const Login1: React.FC<Login1Props> = ({ toggleAuth }) => {
 
   const onSubmit = async (data: FormData) => {
     try {
-      const t = await signInWithEmailAndPassword(auth, data.email, data.password);
-      const idToken = await t.user.getIdToken();
-      console.log(idToken);
-      const res = jwtDecode(idToken);
-      console.log(res);
+      const url=process.env.REACT_APP_BACKENDURL;
+      await signInWithEmailAndPassword(auth, data.email, data.password);
+      const GetUserNameFromDb = await axios.get(`${url}getUserViaLogin`, {
+        params: { email: data.email }
+      });
       
+      localStorage.setItem("name",GetUserNameFromDb.data.findUser.username);
       toast.success('Login Successfully');
     } catch (error: any) {
       const errorMessage = getErrorMessage(error.code);
+      console.log(error);
+      
       toast.error(errorMessage);
     }
   };
 
   const handleGoogleSignIn = async () => {
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const idToken = await result.user.getIdToken();
-      console.log(idToken);
-      const res = jwtDecode(idToken);
-      console.log(res);
+      const data = await signInWithPopup(auth, googleProvider);
+      localStorage.setItem("name",data.user.displayName||"");
       
       toast.success('Logged in with Google');
     } catch (error: any) {
