@@ -79,8 +79,7 @@ const Profile = () => {
     }
 
     const apiUrl = process.env.REACT_APP_BACKENDURL;
-    console.log(bookmark);
-    const { title, imageUrl, summary, url, _id } = bookmark;
+    const { title, imageUrl, summary, url } = bookmark;
     try {
       const response = await axios.delete(`${apiUrl}removeBookmark`, {
         data: { username, title, imageUrl: imageUrl, summary, url },
