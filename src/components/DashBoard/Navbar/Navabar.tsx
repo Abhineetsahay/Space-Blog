@@ -89,21 +89,27 @@ const Navbar = () => {
       {isOpen && (
         <div className="sm:hidden bg-gray-700">
           <button
-            onClick={() => navigate("/profile")}
+            onClick={toProfile}
             className="block w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-600"
           >
             Your Profile
           </button>
+          <button
+              onClick={()=>navigate("/dashboard/CreateBlog")}
+              className="block w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-600"
+            >
+             Create Your Blog
+            </button>
 
           <button
-            onClick={() => navigate("/news")}
+            onClick={() => navigate("/dashboard/watchNews")}
             className="block w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-600"
           >
             See News
           </button>
 
           <button
-            onClick={() => navigate("/blogs")}
+            onClick={() => navigate("/dashboard/blogs")}
             className="block w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-600"
           >
             Blogs

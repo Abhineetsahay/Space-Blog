@@ -6,7 +6,7 @@ import WatchNews from "./components/DashBoard/News/WatchNews";
 import Profile from "./components/DashBoard/User/Profile";
 import SeeBlogs from "./components/DashBoard/Blogs/SeeBlogs";
 import AddBlog from "./components/DashBoard/Blogs/AddBlog";
-
+import BlogDetails from "./components/DashBoard/Blogs/BlogDetails";
 function App() {
   return (
     <div className="h-full w-full bg-gray-900">
@@ -18,6 +18,7 @@ function App() {
           <Route path=":username/profile" element={<Profile />} />
           <Route path="blogs" element={<SeeBlogs/>}/>
           <Route path="CreateBlog" element={<AddBlog/>}/>
+          <Route path="blogs/:id" element={<BlogDetails />}/>
         </Route>
       </Routes>
     </div>

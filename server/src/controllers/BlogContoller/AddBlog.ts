@@ -1,9 +1,15 @@
 import { Request, Response } from "express";
 import { Blog } from "../../models/User";
 import { User } from "../../models/User";
+
+interface BLOG{
+  username:String;
+  title:String;
+  description:String,
+}
 export const AddBlog = async (req: Request, res: Response) => {
   try {
-    const { username, title, description } = req.body;
+    const { username, title, description }:BLOG = req.body;
     const UserTobeUpdated = await User.findOne({ username });
     if (!UserTobeUpdated) {
       return res.status(404).json({
