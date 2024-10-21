@@ -36,6 +36,7 @@ export const AddRemoveLike = async (req: Request, res: Response) => {
         success: true,
         message: "Blog unliked successfully.",
         likes: blog.likes,
+        likedByUser:false,
       });
     } else {
 
@@ -49,6 +50,7 @@ export const AddRemoveLike = async (req: Request, res: Response) => {
         success: true,
         message: "Blog liked successfully.",
         likes: blog.likes,
+        likedByUser:true
       });
     }
   } catch (error: any) {

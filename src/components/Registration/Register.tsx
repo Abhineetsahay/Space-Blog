@@ -4,7 +4,13 @@ import { auth, googleProvider } from "../../firebase/Firebase";
 import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { FaUserAlt, FaPhoneAlt, FaEnvelope, FaLock, FaGoogle } from "react-icons/fa";
+import {
+  FaUserAlt,
+  FaPhoneAlt,
+  FaEnvelope,
+  FaLock,
+  FaGoogle,
+} from "react-icons/fa";
 import axios from "axios";
 
 interface FormData {
@@ -27,13 +33,17 @@ const Registration: React.FC<RegistrationProps> = ({ toggleAuth }) => {
     formState: { errors },
   } = useForm<FormData>();
   const navigate = useNavigate();
-  
-  const url=process.env.REACT_APP_BACKENDURL;
+
+  const url = process.env.REACT_APP_BACKENDURL;
   const handleRegister = async (data: FormData) => {
     try {
       await createUserWithEmailAndPassword(auth, data.email, data.password);
-      await axios.post(`${url}addUser`,{username:data.username,email:data.email});
-      localStorage.setItem("name",data.username);
+      const testingINPROD = await axios.post(`${url}addUser`, {
+        username: data.username,
+        email: data.email,
+      });
+      console.log(testingINPROD);
+      localStorage.setItem("name", data.username);
       navigate("/dashboard/blogs");
       toast.success("User Created Successfully");
     } catch (error: any) {
@@ -45,11 +55,14 @@ const Registration: React.FC<RegistrationProps> = ({ toggleAuth }) => {
 
   const handleGoogleSignIn = async () => {
     try {
-      const data= await signInWithPopup(auth, googleProvider);
-      const t=await axios.post(`${url}addUser`,{username:data.user.displayName,email:data.user.email});
+      const data = await signInWithPopup(auth, googleProvider);
+      const t = await axios.post(`${url}addUser`, {
+        username: data.user.displayName,
+        email: data.user.email,
+      });
       console.log(t);
-      
-      localStorage.setItem("name",data.user.displayName||"");
+
+      localStorage.setItem("name", data.user.displayName || "");
       navigate("/dashboard/blogs");
       toast.success("Signed in with Google successfully");
     } catch (error: any) {
@@ -75,7 +88,9 @@ const Registration: React.FC<RegistrationProps> = ({ toggleAuth }) => {
   return (
     <div className="min-h-screen relative z-10 py-3 flex items-center justify-center ">
       <div className="bg-blue-50 shadow-lg rounded-lg p-8 max-w-md w-full">
-        <h2 className="text-3xl font-bold text-indigo-600 text-center mb-6">Create Your Account</h2>
+        <h2 className="text-3xl font-bold text-indigo-600 text-center mb-6">
+          Create Your Account
+        </h2>
         <form className="space-y-6" onSubmit={handleSubmit(handleRegister)}>
           <div className="relative">
             <FaUserAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -88,7 +103,9 @@ const Registration: React.FC<RegistrationProps> = ({ toggleAuth }) => {
               {...register("username", { required: "Username is required" })}
             />
             {errors.username && (
-              <p className="text-red-500 text-sm mt-1">{errors.username.message}</p>
+              <p className="text-red-500 text-sm mt-1">
+                {errors.username.message}
+              </p>
             )}
           </div>
 
@@ -109,7 +126,9 @@ const Registration: React.FC<RegistrationProps> = ({ toggleAuth }) => {
               })}
             />
             {errors.phone && (
-              <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
+              <p className="text-red-500 text-sm mt-1">
+                {errors.phone.message}
+              </p>
             )}
           </div>
 
@@ -130,7 +149,9 @@ const Registration: React.FC<RegistrationProps> = ({ toggleAuth }) => {
               })}
             />
             {errors.email && (
-              <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+              <p className="text-red-500 text-sm mt-1">
+                {errors.email.message}
+              </p>
             )}
           </div>
 
@@ -151,7 +172,9 @@ const Registration: React.FC<RegistrationProps> = ({ toggleAuth }) => {
               })}
             />
             {errors.password && (
-              <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+              <p className="text-red-500 text-sm mt-1">
+                {errors.password.message}
+              </p>
             )}
           </div>
 
@@ -170,7 +193,9 @@ const Registration: React.FC<RegistrationProps> = ({ toggleAuth }) => {
               })}
             />
             {errors.confirmPassword && (
-              <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>
+              <p className="text-red-500 text-sm mt-1">
+                {errors.confirmPassword.message}
+              </p>
             )}
           </div>
 

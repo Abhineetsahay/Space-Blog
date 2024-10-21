@@ -9,7 +9,7 @@ import AddBlog from "./components/DashBoard/Blogs/AddBlog";
 import BlogDetails from "./components/DashBoard/Blogs/BlogDetails";
 function App() {
   return (
-    <div className="h-full w-full bg-gray-900">
+    <div className="h-full w-full bg-gray-900 ">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/authenticate" element={<Authoisation />} />

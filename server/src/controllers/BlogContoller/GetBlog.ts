@@ -4,7 +4,6 @@ import { Blog } from "../../models/User";
 export const GetBlog = async (req: Request, res: Response) => {
   try {
     const { page = 1, limit = 10 } = req.query; 
-    console.log(page);
     
     let skip = (Number(page) - 1) * Number(limit); 
     if(skip<0) skip=0;

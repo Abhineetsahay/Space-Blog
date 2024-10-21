@@ -2,9 +2,13 @@ import mongoose, { Schema, Types, model } from "mongoose";
 
 const CommentSchema = new Schema(
   {
+    commentAuthor:{
+      type: String,
+      required: true,
+    },
     commentText: {
       type: String,
-      required: false,
+      required: true,
     },
     commentLikes: {
       type: Number,

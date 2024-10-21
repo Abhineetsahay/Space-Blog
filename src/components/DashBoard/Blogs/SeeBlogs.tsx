@@ -20,19 +20,23 @@ export interface Blog {
 }
 
 const SeeBlogs = () => {
-  const [likedPosts, setLikedPosts] = useState<string[]>(JSON.parse(localStorage.getItem("likedPost") || "[]"));
-  const [limit] = useState(10); 
+  const [likedPosts, setLikedPosts] = useState<string[]>(
+    JSON.parse(localStorage.getItem("likedPost") || "[]")
+  );
+  const [limit] = useState(10);
   const [currentPage, setCurrentPage] = useState<number>(
-    () => Number(localStorage.getItem("currentPage")) || 1 
+    () => Number(localStorage.getItem("currentPage")) || 1
   );
 
   const dispatch = useDispatch<any>();
-  const { blogs, totalPages, loading } = useSelector((state: RootState) => state.Bloggetter);
+  const { blogs, totalPages, loading } = useSelector(
+    (state: RootState) => state.Bloggetter
+  );
 
   useEffect(() => {
     dispatch(fetchBlogs(currentPage, limit));
     localStorage.setItem("currentPage", currentPage.toString());
-  }, [dispatch, currentPage, limit]);
+  }, [dispatch, currentPage, limit, likedPosts]);
 
   const handleLike = async (blogId: string) => {
     try {
@@ -45,7 +49,6 @@ const SeeBlogs = () => {
 
       if (response.data.success) {
         const updatedLikedByUser = response.data.likedByUser;
-
         if (updatedLikedByUser) {
           const updatedLikes = [...likedPosts, blogId];
           setLikedPosts(updatedLikes);
@@ -82,13 +85,18 @@ const SeeBlogs = () => {
                 animate={{ opacity: 1, y: 0 }}
                 whileHover={{ scale: 1.01 }}
               >
-                <h2 className="text-xl font-semibold mb-2 text-white">{blog.title}</h2>
+                <h2 className="text-xl font-semibold mb-2 text-white">
+                  {blog.title}
+                </h2>
                 <p className="text-gray-400 mb-4">
                   {blog.description.length > 50
                     ? `${blog.description.substring(0, 50)}...`
                     : blog.description}
                 </p>
-                <Link to={`/dashboard/blogs/${blog._id}`} className="text-blue-500 hover:underline">
+                <Link
+                  to={`/dashboard/blogs/${blog._id}`}
+                  className="text-blue-500 hover:underline"
+                >
                   Read more
                 </Link>
 
@@ -98,15 +106,24 @@ const SeeBlogs = () => {
                     whileTap={{ scale: 0.9 }}
                     className="flex items-center text-gray-400 hover:text-red-500 transition"
                   >
-                    {blog.likedByUser ? <AiFillHeart className="text-red-500" /> : <AiOutlineHeart className="text-gray-400" />}
+                    {blog.likedByUser ? (
+                      <AiFillHeart className="text-red-500" />
+                    ) : (
+                      <AiOutlineHeart className="text-gray-400" />
+                    )}
                     <span className="ml-1">{blog.likes}</span>
                   </motion.button>
 
                   <div className="flex flex-col items-end">
                     <span className="text-sm text-gray-400">
-                      Author: <span className="font-medium text-white">{blog.username}</span>
+                      Author:{" "}
+                      <span className="font-medium text-white">
+                        {blog.username}
+                      </span>
                     </span>
-                    <span className="text-sm text-gray-400 cursor-pointer">Comments: {blog.comments.length}</span>
+                    <span className="text-sm text-gray-400 cursor-pointer">
+                      Comments: {blog.comments.length}
+                    </span>
                   </div>
                 </div>
               </motion.div>
