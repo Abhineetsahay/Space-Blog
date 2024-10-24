@@ -2,7 +2,6 @@ import Navbar from "../components/DashBoard/Navbar/Navabar";
 import { auth } from "../firebase/Firebase";
 import { useEffect, useState } from "react";
 import { useNavigate, Outlet } from "react-router-dom";
-import toast from "react-hot-toast";
 
 export const Dashboard = () => {
   const navigate = useNavigate();
@@ -14,7 +13,6 @@ export const Dashboard = () => {
         setUser(user);
       } else {
         setUser(null);
-        toast.error("You must be logged in to view this page");
         navigate("/authenticate");
       }
     });

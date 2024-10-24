@@ -35,47 +35,52 @@ const Registration: React.FC<RegistrationProps> = ({ toggleAuth }) => {
   const navigate = useNavigate();
 
   const url = process.env.REACT_APP_BACKENDURL;
+
   const handleRegister = async (data: FormData) => {
     try {
       await createUserWithEmailAndPassword(auth, data.email, data.password);
-      const testingINPROD = await axios.post(`${url}addUser`, {
+      await axios.post(`${url}addUser`, {
         username: data.username,
         email: data.email,
       });
-      console.log(testingINPROD);
       localStorage.setItem("name", data.username);
       navigate("/dashboard/blogs");
       toast.success("User Created Successfully");
     } catch (error: any) {
-      const errorMessage = getErrorMessage(error.code);
-      console.log(error);
-      toast.error(errorMessage);
+      if (error.code === "auth/email-already-in-use") {
+        toast.error("Email already in use. Would you like to login instead?");
+      } else {
+        const errorMessage = getErrorMessage(error.code);
+        toast.error(errorMessage);
+      }
     }
   };
-
   const handleGoogleSignIn = async () => {
     try {
-      const data = await signInWithPopup(auth, googleProvider);
-      const t = await axios.post(`${url}addUser`, {
-        username: data.user.displayName,
-        email: data.user.email,
-      });
-      console.log(t);
-
-      localStorage.setItem("name", data.user.displayName || "");
-      navigate("/dashboard/blogs");
-      toast.success("Signed in with Google successfully");
+      const result = await signInWithPopup(auth, googleProvider);
+      
+      if (result.user) {
+        await axios.post(`${url}addUser`, {
+          username: result.user.displayName,
+          email: result.user.email,
+        });
+        localStorage.setItem("name", result.user.displayName || "");
+        navigate("/dashboard/blogs");
+        toast.success("Signed in with Google successfully");
+      }
     } catch (error: any) {
+      await auth.signOut();
       const errorMessage = getErrorMessage(error.code);
-      console.log(error);
       toast.error(errorMessage);
+      navigate("/authenticate");
     }
   };
+  
 
   const getErrorMessage = (code: string): string => {
     switch (code) {
       case "auth/email-already-in-use":
-        return "The email address is already in use. Please use a different email.";
+        return "The email address is already in use. Please log in or use a different email.";
       case "auth/invalid-email":
         return "The email address is not valid. Please enter a valid email.";
       case "auth/weak-password":
@@ -84,14 +89,15 @@ const Registration: React.FC<RegistrationProps> = ({ toggleAuth }) => {
         return "An unexpected error occurred. Please try again.";
     }
   };
-
+  
   return (
-    <div className="min-h-screen relative z-10 py-3 flex items-center justify-center ">
+    <div className="min-h-screen relative z-10 py-3 flex items-center justify-center">
       <div className="bg-blue-50 shadow-lg rounded-lg p-8 max-w-md w-full">
         <h2 className="text-3xl font-bold text-indigo-600 text-center mb-6">
           Create Your Account
         </h2>
         <form className="space-y-6" onSubmit={handleSubmit(handleRegister)}>
+          {/* Username */}
           <div className="relative">
             <FaUserAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
@@ -143,7 +149,8 @@ const Registration: React.FC<RegistrationProps> = ({ toggleAuth }) => {
               {...register("email", {
                 required: "Email is required",
                 pattern: {
-                  value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+                  value:
+                    /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
                   message: "Enter a valid email",
                 },
               })}

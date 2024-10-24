@@ -7,6 +7,7 @@ import Profile from "./components/DashBoard/User/Profile";
 import SeeBlogs from "./components/DashBoard/Blogs/SeeBlogs";
 import AddBlog from "./components/DashBoard/Blogs/AddBlog";
 import BlogDetails from "./components/DashBoard/Blogs/BlogDetails";
+import Notfound from "./pages/Notfound";
 function App() {
   return (
     <div className="h-full w-full bg-gray-900 ">
@@ -20,6 +21,7 @@ function App() {
           <Route path="CreateBlog" element={<AddBlog/>}/>
           <Route path="blogs/:id" element={<BlogDetails />}/>
         </Route>
+        <Route path="*" element={<Notfound/>}/>
       </Routes>
     </div>
   );

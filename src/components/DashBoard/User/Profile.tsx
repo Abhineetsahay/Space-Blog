@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { Loader } from "../../../utils/Loaders";
-
+import { Blog } from "../Blogs/SeeBlogs";
 interface Bookmark {
   _id: string;
   title: string;
@@ -17,7 +17,7 @@ interface User {
   username: string;
   email: string;
   posts: any[];
-  likesPost: any[];
+  likesPost: Blog[];
   bookmarks: Bookmark[];
   createdAt: string;
   updatedAt: string;
@@ -31,6 +31,9 @@ const Profile = () => {
   const [bookmarkedArticles, setBookmarkedArticles] = useState<Set<string>>(
     new Set()
   );
+  const [likeBlog, setLikeBlog] = useState<Blog[] | null>(null);
+  const [isBookmarkOpen, setIsBookmarkOpen] = useState<Boolean>(false);
+  const [isLikesOpen, setIsLikesOpen] = useState<boolean>(false);
 
   const fetchUser = async () => {
     if (!username) {
@@ -46,7 +49,8 @@ const Profile = () => {
         const fetchedUser: User = response.data.findUser;
         setUser(fetchedUser);
 
-        // Initialize bookmarkedArticles from user data
+        setLikeBlog(response.data.LikePost);
+
         const bookmarkIds = fetchedUser.bookmarks.map((b) => b._id);
         const bookmarkSet = new Set<string>(bookmarkIds);
         setBookmarkedArticles(bookmarkSet);
@@ -105,6 +109,7 @@ const Profile = () => {
   useEffect(() => {
     fetchUser();
   }, []);
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
@@ -119,7 +124,7 @@ const Profile = () => {
       <h1 className="text-4xl font-bold mb-8">Profile Page</h1>
 
       {loading ? (
-        <Loader/>
+        <Loader />
       ) : error ? (
         <div className="bg-red-600 p-4 rounded-lg shadow-md">
           <p className="text-white">{error}</p>
@@ -143,7 +148,6 @@ const Profile = () => {
             </p>
           </div>
 
-          {/* User Details */}
           <div className="bg-gray-700 p-6 rounded-md mb-6">
             <h3 className="text-lg font-medium mb-2">User Information</h3>
             <p className="text-gray-300">
@@ -164,15 +168,80 @@ const Profile = () => {
           </div>
 
           <div className="pt-5">
-            <h3 className="text-2xl font-semibold mb-4">Your Bookmarks</h3>
+            <div
+              className="bg-gray-800 p-4 rounded-md flex justify-between items-center cursor-pointer"
+              onClick={() => setIsBookmarkOpen(!isBookmarkOpen)}
+            >
+              <h3 className="text-2xl font-semibold">Key Highlights :- </h3>
+              <span>{isBookmarkOpen ? "▲" : "▼"}</span>
+            </div>
+            {isBookmarkOpen && (
+              <div className="mt-4">
+                {user.bookmarks.length === 0 ? (
+                  <p className="text-gray-400">You have no bookmarks yet.</p>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {user.bookmarks.map((bookmark) => (
+                      <motion.div
+                        key={bookmark._id}
+                        className="bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col justify-between"
+                        whileHover={{ scale: 1.05 }}
+                        initial={{ opacity: 0, y: 50 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5 }}
+                      >
+                        <div>
+                          <img
+                            src={bookmark.imageUrl}
+                            alt={bookmark.title}
+                            className="w-full h-48 object-cover rounded-md mb-4"
+                          />
+                          <h2 className="text-xl font-semibold mb-2">
+                            {bookmark.title}
+                          </h2>
+                          <p className="text-gray-400 text-sm">
+                            {bookmark.summary?.substring(0, 100)}...
+                          </p>
+                        </div>
+                        <div className="flex gap-6 justify-center items-center mt-6">
+                          <a
+                            href={bookmark.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-400 hover:underline"
+                          >
+                            Read more →
+                          </a>
+                          <button
+                            onClick={() => handleRemoveBookmark(bookmark)}
+                            className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md transition-colors duration-200"
+                            aria-label={`Remove bookmark for ${bookmark.title}`}
+                          >
+                            Remove Bookmark
+                          </button>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
-            {user.bookmarks.length === 0 ? (
-              <p className="text-gray-400">You have no bookmarks yet.</p>
+            <div
+              className="bg-gray-800 p-4 rounded-md flex justify-between items-center cursor-pointer"
+              onClick={() => setIsLikesOpen(!isLikesOpen)}
+            >
+              <h3 className="text-2xl font-semibold">Your Like Blogs :- </h3>
+              <span>{isLikesOpen ? "▲" : "▼"}</span>
+            </div>
+            {isLikesOpen&&(
+            likeBlog && likeBlog.length === 0 ? (
+              <p className="text-gray-400">You have no liked posts yet.</p>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {user.bookmarks.map((bookmark) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+                {likeBlog?.map((blog) => (
                   <motion.div
-                    key={bookmark._id}
+                    key={blog._id}
                     className="bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col justify-between"
                     whileHover={{ scale: 1.05 }}
                     initial={{ opacity: 0, y: 50 }}
@@ -180,39 +249,27 @@ const Profile = () => {
                     transition={{ duration: 0.5 }}
                   >
                     <div>
-                      <img
-                        src={bookmark.imageUrl}
-                        alt={bookmark.title}
-                        className="w-full h-48 object-cover rounded-md mb-4"
-                      />
                       <h2 className="text-xl font-semibold mb-2">
-                        {bookmark.title}
+                        {blog.title}
                       </h2>
                       <p className="text-gray-400 text-sm">
-                        {bookmark.summary?.substring(0, 100)}...
+                        {blog.description?.substring(0, 100)}...
                       </p>
                     </div>
                     <div className="flex gap-6 justify-center items-center mt-6">
                       <a
-                        href={bookmark.url}
+                        href={`/dashboard/blogs/${blog._id}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-blue-400 hover:underline"
                       >
                         Read more →
                       </a>
-                      <button
-                        onClick={() => handleRemoveBookmark(bookmark)}
-                        className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md transition-colors duration-200"
-                        aria-label={`Remove bookmark for ${bookmark.title}`}
-                      >
-                        Remove Bookmark
-                      </button>
                     </div>
                   </motion.div>
                 ))}
               </div>
-            )}
+            ))}
           </div>
         </motion.div>
       ) : null}

@@ -22,10 +22,10 @@ const Navbar = () => {
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
-  const toProfile=()=>{
-          const username=localStorage.getItem("name");
-          navigate(`${username}/profile`)
-  }
+  const toProfile = () => {
+    const username = localStorage.getItem("name");
+    navigate(`${username}/profile`);
+  };
   return (
     <nav className="bg-gray-800 text-white ">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -56,10 +56,10 @@ const Navbar = () => {
               Your Profile
             </button>
             <button
-              onClick={()=>navigate("/dashboard/CreateBlog")}
+              onClick={() => navigate("/dashboard/CreateBlog")}
               className="hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
             >
-             Create Your Blog
+              Create Your Blog
             </button>
 
             <button
@@ -95,11 +95,11 @@ const Navbar = () => {
             Your Profile
           </button>
           <button
-              onClick={()=>navigate("/dashboard/CreateBlog")}
-              className="block w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-600"
-            >
-             Create Your Blog
-            </button>
+            onClick={() => navigate("/dashboard/CreateBlog")}
+            className="block w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-600"
+          >
+            Create Your Blog
+          </button>
 
           <button
             onClick={() => navigate("/dashboard/watchNews")}
